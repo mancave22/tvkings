@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addons>
+<addon id="plugin.video.tvkings2"
+       name="TV Kings"
+       version="3.0"
+       provider-name="TV Kings">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+	<import addon="script.module.requests" />
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">TV Kings</summary>
+    <language>en</language>
+    <description lang="en">TV Kings offers premium quality streams. Credits to sClarke for the code used in this addon.</description>
+     <platform>all</platform>
+  </extension>
+</addon>
+
+<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.1" provider-name="TV Kings">
+	<extension point="xbmc.addon.repository" name="TV Kings Repository">
+		<dir>
+			<info compressed="false">https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/</datadir>
+		</dir>
+		<info compressed="false">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml</info>
+		<checksum>https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml.md5</checksum>
+		<datadir zip="true">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary lang="en">TV Kings Repo</summary>
+		<description lang="en">TV Kings Addon</description>
+		<genre></genre>
+	</extension>
+</addon>
+</addons>

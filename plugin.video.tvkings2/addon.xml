@@ -1,0 +1,20 @@
+<?xml version="1.1" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.tvkings2"
+       name="TV Kings"
+       version="3.0"
+       provider-name="TV Kings">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+	<import addon="script.module.requests" />
+  </requires>
+  <extension point="xbmc.python.pluginsource"
+            library="default.py">
+        <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en">TV Kings</summary>
+    <language>en</language>
+    <description lang="en">TV Kings offers premium quality streams. Credits to sClarke for the code used in this addon.</description>
+     <platform>all</platform>
+  </extension>
+</addon>
