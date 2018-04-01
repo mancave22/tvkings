@@ -333,7 +333,25 @@ and basketball events. NOT SUPPORTED BY ESPN OR DISNEY OR ANYONE ELSE
     </extension>
 </addon>
 
-<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.2" provider-name="TV Kings">
+<addon id="repository.jsergio" name="jsergio repo" version="1.0.3" provider-name="jsergio">
+	<extension point="xbmc.addon.repository" name="jsergio repo">
+        <dir>
+            <info compressed="false">https://raw.github.com/ddurdle/repository.ddurdle/master/addons.xml</info>
+            <checksum>https://raw.github.com/ddurdle/repository.ddurdle/master/addons.xml.md5</checksum>
+            <datadir zip="true">http://dmdsoftware.net/repository.ddurdle/</datadir>
+        </dir>
+        <info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+        <checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+        <datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>Repo for jsergio Add-ons</summary>
+		<description>Repo for jsergio Add-ons</description>
+		<platform>all</platform>
+	</extension>
+</addon>
+
+<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.3" provider-name="TV Kings">
 	<extension point="xbmc.addon.repository" name="TV Kings Repository">
 		<dir>
 			<info compressed="false">https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/addons.xml</info>
