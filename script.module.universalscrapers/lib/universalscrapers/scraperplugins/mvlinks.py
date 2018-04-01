@@ -57,8 +57,9 @@ class mvlinks(Scraper):
             links = link.split('post-title')
             for p in links:
 
-                m_url = re.compile('href="([^"]+)"').findall(p)[0]
-                m_title = re.compile('title="([^"]+)"').findall(p)[0]
+                m_url = re.compile('href="(.+?)"').findall(p)[0]
+                m_title = re.compile('title="(.+?)"').findall(p)[0]
+                # print '>>>>>>>>>>>>>>>>>>>' + m_url
                 if ' 20' in m_title:
                     name = m_title.split(' 20')[0]
                 elif ' 19' in m_title:
@@ -81,9 +82,10 @@ class mvlinks(Scraper):
     def get_source(self,m_url):
         try:         
             OPEN = requests.get(m_url).content
-            match = re.compile('<li><a href="(.+?)"').findall(OPEN)
+            match = re.compile('iframe src="(.+?)"').findall(OPEN)
             count = 0
             for link in match:
+                print link 
                 if not urlresolver.HostedMediaFile(link).valid_url(): 
                     continue                
                 label = link.split('//')[1].replace('www.','')
