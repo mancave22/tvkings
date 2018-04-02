@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.3" provider-name="TV Kings">
+<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.4" provider-name="TV Kings">
 	<extension point="xbmc.addon.repository" name="TV Kings Repository">
-		<dir>
-			<info compressed="false">https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/addons.xml</info>
-			<checksum>https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/addons.xml.md5</checksum>
-			<datadir zip="true">https://raw.githubusercontent.com/noobsandnerds/modules4all/master/zips/</datadir>
-		</dir>
-		<info compressed="false">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml</info>
-		<checksum>https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml.md5</checksum>
-		<datadir zip="true">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/</datadir>
+			<info compressed="false">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml</info>
+			<checksum>https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml.md5</checksum>
+			<datadir zip="true">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/</datadir>
+		    <dir>
+				<info compressed="false">https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml</info>
+				<checksum>https://raw.githubusercontent.com/jsergio123/zips/master/addons.xml.md5</checksum>
+				<datadir zip="true">https://raw.githubusercontent.com/jsergio123/zips/master/</datadir>
+            </dir>
+			<dir>
+                <info compressed="false">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml</info>
+                <checksum>https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/addons.xml.md5</checksum>
+                <datadir zip="true">https://raw.githubusercontent.com/teamuniversal/scrapers/master/_modules4all/zips/</datadir>
+            </dir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">TV Kings Repo</summary>
