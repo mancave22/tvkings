@@ -1,6 +1,6 @@
 # Addon Name: Man Cave Jamz
 # Addon id: plugin.video.mcjamz
-# Addon Provider: Man Cave
+# Addon Provider: Man Cave Entertainment
 msgid ""
 msgstr ""
 "Project-Id-Version: Jen\n"

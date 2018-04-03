@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.mcjamz" name="Man Cave Jamz" version="1.1" provider-name="Man Cave Entertainment">
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.mcjamz" name="Man Cave Jamz" version="1.2" provider-name="Man Cave Entertainment">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.universalscrapers" version="1.0.0" />
