@@ -1,6 +1,6 @@
 # Addon Name: Man Cave Flix
 # Addon id: plugin.video.mancaveflix
-# Addon Provider: Man Cave Entertainment
+# Addon Provider: Man Cave
 msgid ""
 msgstr ""
 "Project-Id-Version: Jen\n"

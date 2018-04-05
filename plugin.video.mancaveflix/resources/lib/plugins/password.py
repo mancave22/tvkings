@@ -77,7 +77,7 @@ def showing(url):
 	TheCode = TheCode.replace("get/","")
 	TheCode = base64.b64decode(TheCode)
 	input = ''
-	keyboard = xbmc.Keyboard(input, '[COLOR red]18+ Only[/COLOR]')
+	keyboard = xbmc.Keyboard(input, '[COLOR red]So Your Wanting The Naughty Bits Are You ?? Get The Tissues At The Ready[/COLOR]')
 	keyboard.doModal()
 	if keyboard.isConfirmed():
 		input = keyboard.getText()
@@ -90,7 +90,7 @@ def showing(url):
 			xml += xmlContent
 	else:
 		xml += "<dir>"\
-			   "<title>[COLOR yellow]Wrong Answer, What would your Grandma say?[/COLOR]</title>"\
+			   "<title>[COLOR yellow]Wrong Answer, Are you sure your old enough ??[/COLOR]</title>"\
 			   "<thumbnail>https://nsx.np.dl.playstation.net/nsx/material/c/ce432e00ce97a461b9a8c01ce78538f4fa6610fe-1107562.png</thumbnail>"\
 			   "</dir>"
 	jenlist = JenList(xml)
