@@ -1,6 +1,6 @@
 # Addon Name: Man Cave Flix
 # Addon id: plugin.video.mancaveflix
-# Addon Provider: Man Cave
+# Addon Provider: Man Cave Entertainment
 msgid ""
 msgstr ""
 "Project-Id-Version: Jen\n"
@@ -230,7 +230,7 @@ msgid "Offer to install required 3rd party repositories"
 msgstr ""
 
 msgctxt "#30758"
-msgid "Enable debugging mode"
+msgid "Enable Debugging Mode"
 msgstr ""
 
 msgctxt "#30760"

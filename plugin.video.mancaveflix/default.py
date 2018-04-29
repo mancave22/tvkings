@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-    default.py --- Jen Addon entry point
-    Copyright (C) 2017, Jen
+    default.py --- Man Cave Addon entry point
+    Copyright (C) 2017, Man Cave
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

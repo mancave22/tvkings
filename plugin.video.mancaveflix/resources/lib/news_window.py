@@ -20,7 +20,7 @@ from koding import Download
 from koding import route, Run 
 
 
-message_xml_url = "http://wizard.mancavekodi.com/xml/news.xml"
+message_xml_url = "http://YOUR_URL.co.uk/message.xml"
 
 @route(mode="dialog_example")
 def Dialog_Example():
