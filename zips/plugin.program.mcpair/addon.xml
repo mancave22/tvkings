@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.program.mcpair" name="Man Cave Device Pair" version="1.0.0" provider-name="Man Cave Entertainment">
+    <requires>
+        <import addon="xbmc.python" version="2.24.0"/>
+        <import addon="script.module.tulip" version="1.4.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en_GB">Pair Pal</summary>
+        <description lang="en_GB">Forked for Man Cave users from Pairing Tool by Twilight0, all thanks and credit must go to himself. </description>
+    </extension>
+</addon>

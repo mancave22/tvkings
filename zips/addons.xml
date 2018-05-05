@@ -15,6 +15,21 @@
   </extension>
 </addon>
 
+<addon id="plugin.program.mcpair" name="Man Cave Device Pair" version="1.0.0" provider-name="Man Cave Entertainment">
+    <requires>
+        <import addon="xbmc.python" version="2.24.0"/>
+        <import addon="script.module.tulip" version="1.4.0"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>executable</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <platform>all</platform>
+        <summary lang="en_GB">Pair Pal</summary>
+        <description lang="en_GB">Forked for Man Cave users from Pairing Tool by Twilight0, all thanks and credit must go to himself. </description>
+    </extension>
+</addon>
+
 <addon id="plugin.video.espn_3"
        name="ESPN 3"
        version="2.9.25"
@@ -359,7 +374,7 @@ and basketball events. NOT SUPPORTED BY ESPN OR DISNEY OR ANYONE ELSE
     </extension>
 </addon>
 
-<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.7" provider-name="TV Kings">
+<addon id="repository.tvkings" name="TV Kings Repo" version="0.0.8" provider-name="TV Kings">
 	<extension point="xbmc.addon.repository" name="TV Kings Repository">
 			<info compressed="false">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml</info>
 			<checksum>https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml.md5</checksum>
