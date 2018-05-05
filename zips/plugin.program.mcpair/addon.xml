@@ -9,7 +9,7 @@
     </extension>
     <extension point="xbmc.addon.metadata">
         <platform>all</platform>
-        <summary lang="en_GB">Pair Pal</summary>
+        <summary lang="en_GB">Man Cave Device Pair</summary>
         <description lang="en_GB">Forked for Man Cave users from Pairing Tool by Twilight0, all thanks and credit must go to himself. </description>
     </extension>
 </addon>
