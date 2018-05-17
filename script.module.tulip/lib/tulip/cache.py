@@ -23,28 +23,29 @@ import re, hashlib, time
 
 try:
     from sqlite3 import dbapi2 as database
-except:
+except BaseException:
+    # noinspection PyUnresolvedReferences
     from pysqlite2 import dbapi2 as database
 
-import control
+from . import control
 
 
-def get(function, timeout, *args, **table):
+def get(function_, time_out, *args, **table):
     try:
         response = None
 
-        f = repr(function)
+        f = repr(function_)
         f = re.sub('.+\smethod\s|.+function\s|\sat\s.+|\sof\s.+', '', f)
 
         a = hashlib.md5()
         for i in args: a.update(str(i))
         a = str(a.hexdigest())
-    except:
+    except BaseException:
         pass
 
     try:
         table = table['table']
-    except:
+    except BaseException:
         table = 'rel_list'
 
     try:
@@ -54,23 +55,27 @@ def get(function, timeout, *args, **table):
         dbcur.execute("SELECT * FROM %s WHERE func = '%s' AND args = '%s'" % (table, f, a))
         match = dbcur.fetchone()
 
-        response = eval(match[2].encode('utf-8'))
+        try:
+            response = eval(match[2].encode('utf-8'))
+        except BaseException:
+            response = eval(match[2])
 
         t1 = int(match[3])
         t2 = int(time.time())
-        update = (abs(t2 - t1) / 3600) >= int(timeout)
-        if update == False:
+        update = (abs(t2 - t1) / 3600) >= int(time_out)
+        if not update:
             return response
-    except:
+    except BaseException:
         pass
 
     try:
-        r = function(*args)
-        if (r == None or r == []) and not response == None:
+        r = function_(*args)
+        if (r is None or r == []) and response is not None:
             return response
-        elif (r == None or r == []):
+
+        elif r is None or r == []:
             return r
-    except:
+    except BaseException:
         return
 
     try:
@@ -80,31 +85,32 @@ def get(function, timeout, *args, **table):
         dbcur.execute("DELETE FROM %s WHERE func = '%s' AND args = '%s'" % (table, f, a))
         dbcur.execute("INSERT INTO %s Values (?, ?, ?, ?)" % table, (f, a, r, t))
         dbcon.commit()
-    except:
+    except BaseException:
         pass
 
     try:
         return eval(r.encode('utf-8'))
-    except:
-        pass
+    except BaseException:
+        return eval(r)
 
 
-def timeout(function, *args, **table):
+def timeout(function_, *args, **table):
+
     try:
         response = None
 
-        f = repr(function)
+        f = repr(function_)
         f = re.sub('.+\smethod\s|.+function\s|\sat\s.+|\sof\s.+', '', f)
 
         a = hashlib.md5()
         for i in args: a.update(str(i))
         a = str(a.hexdigest())
-    except:
+    except BaseException:
         pass
 
     try:
         table = table['table']
-    except:
+    except BaseException:
         table = 'rel_list'
 
     try:
@@ -114,24 +120,32 @@ def timeout(function, *args, **table):
         dbcur.execute("SELECT * FROM %s WHERE func = '%s' AND args = '%s'" % (table, f, a))
         match = dbcur.fetchone()
         return int(match[3])
-    except:
+    except BaseException:
         return
 
 
 def clear(table=None, withyes=True):
+
     try:
         control.idle()
 
-        if table == None:
+        if table is None:
             table = ['rel_list', 'rel_lib']
         elif not type(table) == list:
             table = [table]
 
         if withyes:
-            yes = control.yesnoDialog(control.lang(30401).encode('utf-8'), '', '')
+
+            try:
+                yes = control.yesnoDialog(control.lang(30401).encode('utf-8'), '', '')
+            except BaseException:
+                yes = control.yesnoDialog(control.lang(30401), '', '')
+
             if not yes:
                 return
+
         else:
+
             pass
 
         dbcon = database.connect(control.cacheFile)
@@ -142,11 +156,27 @@ def clear(table=None, withyes=True):
                 dbcur.execute("DROP TABLE IF EXISTS %s" % t)
                 dbcur.execute("VACUUM")
                 dbcon.commit()
-            except:
+            except BaseException:
                 pass
 
         control.infoDialog(control.lang(30402).encode('utf-8'))
-    except:
+    except BaseException:
         pass
 
 
+def delete(dbfile=control.cacheFile, withyes=True):
+
+    if withyes:
+
+        yes = control.yesnoDialog(control.lang(30401).encode('utf-8'), '', '')
+
+        if not yes:
+            return
+
+    else:
+
+        pass
+
+    control.deleteFile(dbfile)
+
+    control.infoDialog(control.lang(30402).encode('utf-8'))

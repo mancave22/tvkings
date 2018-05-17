@@ -18,83 +18,126 @@
         along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+### Python 2/3 compatibility block  try/except###
 
-import re, sys, cookielib, time, random
-import urllib, urllib2, urlparse, HTMLParser
-import cache
+try:
+    import cookielib
+    from urllib import URLopener, quote_plus, unquote
+    import urllib2
+    import urlparse
+    from HTMLParser import HTMLParser
+    un_escape = HTMLParser().unescape
+except ImportError:
+    from http import cookiejar as cookielib
+    import urllib.request as urllib2
+    URLopener = urllib2.URLopener
+    import urllib.parse as urlparse
+    quote_plus = urlparse.quote_plus
+    unquote = urlparse.unquote
+    from html import unescape as un_escape
+
+try:
+    uni_code = unicode
+except BaseException:
+    uni_code = str
+
+### End Python 2/3 compatibility block ###
+
+import re, sys, time, random, platform
+from . import cache, control
+from .log import log_debug
 
 
-def request(url, close=True, redirect=True, error=False, proxy=None, post=None, headers=None, mobile=False, limit=None, referer=None, cookie=None, output='', timeout='30'):
+def request(url, close=True, redirect=True, error=False, proxy=None, post=None, headers=None, mobile=False, limit=None,
+            referer=None, cookie=None, output='', timeout='30'):
+
     try:
         handlers = []
 
-        if not proxy == None:
-            handlers += [urllib2.ProxyHandler({'http':'%s' % (proxy)}), urllib2.HTTPHandler]
-            opener = urllib2.build_opener(*handlers)
-            opener = urllib2.install_opener(opener)
+        if proxy is not None:
 
-        if output == 'cookie' or output == 'extended' or not close == True:
+            handlers += [urllib2.ProxyHandler({'http':'{0}'.format(proxy)}), urllib2.HTTPHandler]
+            opener = urllib2.build_opener(*handlers)
+            urllib2.install_opener(opener)
+
+        if output == 'cookie' or output == 'extended' or close is not True:
+
             cookies = cookielib.LWPCookieJar()
             handlers += [urllib2.HTTPHandler(), urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor(cookies)]
             opener = urllib2.build_opener(*handlers)
-            opener = urllib2.install_opener(opener)
+            urllib2.install_opener(opener)
 
         try:
-            if sys.version_info < (2, 7, 9):
-                raise Exception()
-            import ssl; ssl_context = ssl.create_default_context()
+
+            if (2, 7, 9) < sys.version_info:
+                raise BaseException
+
+            import ssl
+            try:
+                from _ssl import CERT_NONE
+            except ImportError:
+                pass
+            ssl_context = ssl.create_default_context()
             ssl_context.check_hostname = False
-            ssl_context.verify_mode = ssl.CERT_NONE
+            try:
+                ssl_context.verify_mode = CERT_NONE
+            except BaseException:
+                ssl_context.verify_mode = ssl.CERT_NONE
             handlers += [urllib2.HTTPSHandler(context=ssl_context)]
             opener = urllib2.build_opener(*handlers)
-            opener = urllib2.install_opener(opener)
+            urllib2.install_opener(opener)
 
-        except:
+        except BaseException:
             pass
-
 
         try:
             headers.update(headers)
-        except:
+        except BaseException:
             headers = {}
+
         if 'User-Agent' in headers:
             pass
-        elif not mobile == True:
+        elif not mobile is True:
             #headers['User-Agent'] = agent()
             headers['User-Agent'] = cache.get(randomagent, 1)
         else:
             headers['User-Agent'] = 'Apple-iPhone/701.341'
+
         if 'Referer' in headers:
             pass
-        elif referer == None:
+        elif referer is None:
             headers['Referer'] = '%s://%s/' % (urlparse.urlparse(url).scheme, urlparse.urlparse(url).netloc)
         else:
             headers['Referer'] = referer
+
         if not 'Accept-Language' in headers:
             headers['Accept-Language'] = 'en-US'
+
         if 'Cookie' in headers:
             pass
-        elif not cookie == None:
+        elif cookie is not None:
             headers['Cookie'] = cookie
 
-        if redirect == False:
+        if redirect is False:
 
             class NoRedirection(urllib2.HTTPErrorProcessor):
+
                 def http_response(self, request, response):
                     return response
 
             opener = urllib2.build_opener(NoRedirection)
-            opener = urllib2.install_opener(opener)
+            urllib2.install_opener(opener)
 
             try:
                 del headers['Referer']
-            except:
+            except BaseException:
                 pass
 
-        request = urllib2.Request(url, data=post, headers=headers)
+        req = urllib2.Request(url, data=post, headers=headers)
 
         try:
-            response = urllib2.urlopen(request, timeout=int(timeout))
+
+            response = urllib2.urlopen(req, timeout=int(timeout))
 
         except urllib2.HTTPError as response:
 
@@ -108,52 +151,60 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
 
                     headers['Cookie'] = cf
 
-                    request = urllib2.Request(url, data=post, headers=headers)
+                    req = urllib2.Request(url, data=post, headers=headers)
 
-                    response = urllib2.urlopen(request, timeout=int(timeout))
+                    response = urllib2.urlopen(req, timeout=int(timeout))
 
-                elif error == False:
+                elif error is False:
                     return
 
-            elif error == False:
+            elif error is False:
                 return
 
         if output == 'cookie':
+
             try:
                 result = '; '.join(['%s=%s' % (i.name, i.value) for i in cookies])
-            except:
+            except BaseException:
                 pass
             try:
                 result = cf
-            except:
+            except BaseException:
                 pass
 
         elif output == 'response':
+
             if limit == '0':
                 result = (str(response.code), response.read(224 * 1024))
-            elif not limit == None:
+            elif limit is not None:
                 result = (str(response.code), response.read(int(limit) * 1024))
             else:
                 result = (str(response.code), response.read(5242880))
 
         elif output == 'chunk':
-            try: content = int(response.headers['Content-Length'])
-            except: content = (2049 * 1024)
-            if content < (2048 * 1024): return
+
+            try:
+                content = int(response.headers['Content-Length'])
+            except BaseException:
+                content = (2049 * 1024)
+
+            if content < (2048 * 1024):
+                return
             result = response.read(16 * 1024)
 
         elif output == 'extended':
+
             try:
                 cookie = '; '.join(['%s=%s' % (i.name, i.value) for i in cookies])
-            except:
+            except BaseException:
                 pass
             try:
                 cookie = cf
-            except:
+            except BaseException:
                 pass
             content = response.headers
             result = response.read(5242880)
-            return (result, headers, content, cookie)
+            return result, headers, content, cookie
 
         elif output == 'geturl':
             result = response.geturl()
@@ -165,48 +216,165 @@ def request(url, close=True, redirect=True, error=False, proxy=None, post=None, 
         else:
             if limit == '0':
                 result = response.read(224 * 1024)
-            elif not limit == None:
+            elif limit is not None:
                 result = response.read(int(limit) * 1024)
             else:
                 result = response.read(5242880)
 
-        if close == True:
+        if close is True:
             response.close()
 
         return result
 
-    except:
+    except BaseException:
         return
 
 
-def retriever(source, destination):
-    urllib.URLopener().retrieve(source, destination)
+def retriever(source, destination, *args):
+
+    class Opener(URLopener):
+        version = randomagent()
+
+    Opener().retrieve(source, destination, *args)
 
 
-def parseDOM(html, name=u"", attrs={}, ret=False):
+def url2name(url):
 
-    print("Name: " + repr(name) + " - Attrs:" + repr(attrs) + " - Ret: " + repr(ret) + " - HTML: " + str(type(html)), 3)
+    from os.path import basename
+
+    url = url.split('|')[0]
+    return basename(unquote(urlparse.urlsplit(url)[2]))
+
+
+def get_extension(url, response):
+
+    from os.path import splitext
+
+    filename = url2name(url)
+    if 'Content-Disposition' in response.info():
+        cd_list = response.info()['Content-Disposition'].split('filename=')
+        if len(cd_list) > 1:
+            filename = cd_list[-1]
+            if filename[0] == '"' or filename[0] == "'":
+                filename = filename[1:-1]
+    elif response.url != url:
+        filename = url2name(response.url)
+    ext = splitext(filename)[1][1:]
+    if not ext:
+        ext = 'mp4'
+    return ext
+
+
+def __enum(**enums):
+
+    return type('Enum', (), enums)
+
+
+PROGRESS = __enum(OFF=0, WINDOW=1, BACKGROUND=2)
+
+
+def download_media(url, path, file_name, progress=None):
+
+    try:
+        if progress is None:
+            progress = int(control.setting('progress_dialog'))
+
+        active = not progress == PROGRESS.OFF
+        background = progress == PROGRESS.BACKGROUND
+
+        with control.ProgressDialog(
+                control.addonInfo('name'), control.lang(30500).format(file_name), background=background, active=active
+        ) as pd:
+
+            try:
+                headers = dict([item.split('=') for item in (url.split('|')[1]).split('&')])
+                for key in headers:
+                    headers[key] = unquote(headers[key])
+            except:
+                headers = {}
+
+            if 'User-Agent' not in headers:
+                headers['User-Agent'] = randomagent()
+
+            request = urllib2.Request(url.split('|')[0], headers=headers)
+            response = urllib2.urlopen(request)
+
+            if 'Content-Length' in response.info():
+                content_length = int(response.info()['Content-Length'])
+            else:
+                content_length = 0
+
+            file_name += '.' + get_extension(url, response)
+            full_path = control.join(path, file_name)
+            log_debug('Downloading: %s -> %s' % (url, full_path))
+
+            path = control.transPath(control.legalfilename(path))
+
+            try:
+                control.makeFiles(path)
+            except Exception as e:
+                log_debug('Path Create Failed: %s (%s)' % (e, path))
+
+            from os import sep
+
+            if not path.endswith(sep):
+                path += sep
+            if not control.exists(path):
+                raise Exception('Failed to create dir')
+
+            file_desc = control.openFile(full_path, 'w')
+            total_len = 0
+            cancel = False
+            while 1:
+                data = response.read(512 * 1024)
+                if not data:
+                    break
+
+                if pd.is_canceled():
+                    cancel = True
+                    break
+
+                total_len += len(data)
+                if not file_desc.write(data):
+                    raise Exception('Failed to write file')
+
+                percent_progress = total_len * 100 / content_length if content_length > 0 else 0
+                log_debug('Position : {0} / {1} = {2}%'.format(total_len, content_length, percent_progress))
+                pd.update(percent_progress)
+
+            file_desc.close()
+
+        if not cancel:
+            control.infoDialog(control.lang(30501).format(file_name))
+            log_debug('Download Complete: {0} -> {1}'.format(url, full_path))
+
+    except Exception as e:
+        log_debug('Error ({0}) during download: {1} -> {2}'.format(str(e), url, file_name))
+        control.infoDialog(control.lang(30502).format(str(e), file_name))
+
+
+def parseDOM(html, name=u"", attrs=None, ret=False):
+
+    if attrs is None:
+        attrs = {}
 
     if isinstance(name, str):  # Should be handled
         try:
             name = name  # .decode("utf-8")
-        except:
-            print("Couldn't decode name binary string: " + repr(name))
+        except BaseException:
+            pass
 
     if isinstance(html, str):
         try:
             html = [html.decode("utf-8")]  # Replace with chardet thingy
-        except:
-            print("Couldn't decode html binary string. Data length: " + repr(len(html)))
+        except BaseException:
             html = [html]
-    elif isinstance(html, unicode):
+    elif isinstance(html, uni_code):
         html = [html]
     elif not isinstance(html, list):
-        print("Input isn't list or string/unicode.")
         return u""
 
     if not name.strip():
-        print("Missing tag name")
         return u""
 
     ret_lst = []
@@ -218,28 +386,23 @@ def parseDOM(html, name=u"", attrs={}, ret=False):
         lst = _getDOMElements(item, name, attrs)
 
         if isinstance(ret, str):
-            print("Getting attribute %s content for %s matches " % (ret, len(lst) ), 3)
             lst2 = []
             for match in lst:
                 lst2 += _getDOMAttributes(match, name, ret)
             lst = lst2
         else:
-            print("Getting element content for %s matches " % len(lst), 3)
             lst2 = []
             for match in lst:
-                print("Getting element content for %s" % match, 4)
                 temp = _getDOMContent(item, name, match, ret).strip()
                 item = item[item.find(temp, item.find(match)) + len(temp):]
                 lst2.append(temp)
             lst = lst2
         ret_lst += lst
 
-    print("Done: " + repr(ret_lst), 3)
     return ret_lst
 
 
 def _getDOMContent(html, name, match, ret):  # Cleanup
-    print("match: " + match, 3)
 
     endstr = u"</" + name  # + ">"
 
@@ -247,16 +410,12 @@ def _getDOMContent(html, name, match, ret):  # Cleanup
     end = html.find(endstr, start)
     pos = html.find("<" + name, start + 1 )
 
-    print(str(start) + " < " + str(end) + ", pos = " + str(pos) + ", endpos: " + str(end), 8)
-
     while pos < end and pos != -1:  # Ignore too early </endstr> return
         tend = html.find(endstr, end + len(endstr))
         if tend != -1:
             end = tend
         pos = html.find("<" + name, pos + 1)
-        print("loop: " + str(start) + " < " + str(end) + " pos = " + str(pos), 8)
 
-    print("start: %s, len: %s, end: %s" % (start, len(match), end), 3)
     if start == -1 and end == -1:
         result = u""
     elif start > -1 and end > -1:
@@ -270,12 +429,10 @@ def _getDOMContent(html, name, match, ret):  # Cleanup
         endstr = html[end:html.find(">", html.find(endstr)) + 1]
         result = match + result + endstr
 
-    print("done result length: " + str(len(result)), 3)
     return result
 
 
 def _getDOMAttributes(match, name, ret):
-    print("", 3)
 
     lst = re.compile('<' + name + '.*?' + ret + '=([\'"].[^>]*?[\'"])>', re.M | re.S).findall(match)
     if len(lst) == 0:
@@ -284,7 +441,6 @@ def _getDOMAttributes(match, name, ret):
     for tmp in lst:
         cont_char = tmp[0]
         if cont_char in "'\"":
-            print("Using %s as quotation mark" % cont_char, 3)
 
             # Limit down to next variable.
             if tmp.find('=' + cont_char, tmp.find(cont_char, 1)) > -1:
@@ -294,7 +450,7 @@ def _getDOMAttributes(match, name, ret):
             if tmp.rfind(cont_char, 1) > -1:
                 tmp = tmp[1:tmp.rfind(cont_char)]
         else:
-            print("No quotation mark found", 3)
+
             if tmp.find(" ") > 0:
                 tmp = tmp[:tmp.find(" ")]
             elif tmp.find("/") > 0:
@@ -304,12 +460,10 @@ def _getDOMAttributes(match, name, ret):
 
         ret.append(tmp.strip())
 
-    print("Done: " + repr(ret), 3)
     return ret
 
 
 def _getDOMElements(item, name, attrs):
-    print("", 3)
 
     lst = []
     for key in attrs:
@@ -318,74 +472,100 @@ def _getDOMElements(item, name, attrs):
             lst2 = re.compile('(<' + name + '[^>]*?(?:' + key + '=' + attrs[key] + '.*?>))', re.M | re.S).findall(item)
 
         if len(lst) == 0:
-            print("Setting main list " + repr(lst2), 5)
             lst = lst2
             lst2 = []
         else:
-            print("Setting new list " + repr(lst2), 5)
-            test = range(len(lst))
+
+            test = list(range(len(lst)))
             test.reverse()
             for i in test:  # Delete anything missing from the next list.
                 if not lst[i] in lst2:
-                    print("Purging mismatch " + str(len(lst)) + " - " + repr(lst[i]), 3)
                     del(lst[i])
 
     if len(lst) == 0 and attrs == {}:
-        print("No list found, trying to match on name only", 3)
         lst = re.compile('(<' + name + '>)', re.M | re.S).findall(item)
         if len(lst) == 0:
             lst = re.compile('(<' + name + ' .*?>)', re.M | re.S).findall(item)
 
-    print("Done: " + str(type(lst)), 3)
     return lst
 
 
 def replaceHTMLCodes(txt):
+
     txt = re.sub("(&#[0-9]+)([^;^0-9]+)", "\\1;\\2", txt)
-    txt = HTMLParser.HTMLParser().unescape(txt)
+    txt = un_escape(txt)
     txt = txt.replace("&quot;", "\"")
     txt = txt.replace("&amp;", "&")
     txt = txt.replace("&#38;", "&")
     txt = txt.replace("&nbsp;", "")
+
     return txt
 
 
 def randomagent():
+
     BR_VERS = [
-        ['%s.0' % i for i in xrange(18, 43)],
-        ['37.0.2062.103', '37.0.2062.120', '37.0.2062.124', '38.0.2125.101', '38.0.2125.104', '38.0.2125.111', '39.0.2171.71', '39.0.2171.95', '39.0.2171.99', '40.0.2214.93', '40.0.2214.111',
-         '40.0.2214.115', '42.0.2311.90', '42.0.2311.135', '42.0.2311.152', '43.0.2357.81', '43.0.2357.124', '44.0.2403.155', '44.0.2403.157', '45.0.2454.101', '45.0.2454.85', '46.0.2490.71',
-         '46.0.2490.80', '46.0.2490.86', '47.0.2526.73', '47.0.2526.80'],
-        ['11.0']]
-    WIN_VERS = ['Windows NT 10.0', 'Windows NT 7.0', 'Windows NT 6.3', 'Windows NT 6.2', 'Windows NT 6.1', 'Windows NT 6.0', 'Windows NT 5.1', 'Windows NT 5.0']
+        ['%s.0' % i for i in xrange(18, 50)],
+        ['37.0.2062.103', '37.0.2062.120', '37.0.2062.124', '38.0.2125.101', '38.0.2125.104', '38.0.2125.111',
+         '39.0.2171.71', '39.0.2171.95', '39.0.2171.99', '40.0.2214.93', '40.0.2214.111', '40.0.2214.115',
+         '42.0.2311.90', '42.0.2311.135', '42.0.2311.152', '43.0.2357.81', '43.0.2357.124', '44.0.2403.155',
+         '44.0.2403.157', '45.0.2454.101', '45.0.2454.85', '46.0.2490.71', '46.0.2490.80', '46.0.2490.86',
+         '47.0.2526.73', '47.0.2526.80', '48.0.2564.116', '49.0.2623.112', '50.0.2661.86', '51.0.2704.103',
+         '52.0.2743.116', '53.0.2785.143', '54.0.2840.71', '61.0.3163.100'],
+        ['11.0'],
+        ['8.0', '9.0', '10.0', '10.6']
+    ]
+
+    WIN_VERS = [
+        'Windows NT 10.0', 'Windows NT 7.0', 'Windows NT 6.3', 'Windows NT 6.2', 'Windows NT 6.1', 'Windows NT 6.0',
+        'Windows NT 5.1', 'Windows NT 5.0'
+    ]
+
     FEATURES = ['; WOW64', '; Win64; IA64', '; Win64; x64', '']
+
     RAND_UAS = ['Mozilla/5.0 ({win_ver}{feature}; rv:{br_ver}) Gecko/20100101 Firefox/{br_ver}',
                 'Mozilla/5.0 ({win_ver}{feature}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/{br_ver} Safari/537.36',
-                'Mozilla/5.0 ({win_ver}{feature}; Trident/7.0; rv:{br_ver}) like Gecko']
+                'Mozilla/5.0 ({win_ver}{feature}; Trident/7.0; rv:{br_ver}) like Gecko',
+                'Mozilla/5.0 (compatible; MSIE {br_ver}; {win_ver}{feature}; Trident/6.0)']
+
     index = random.randrange(len(RAND_UAS))
+
     return RAND_UAS[index].format(win_ver=random.choice(WIN_VERS), feature=random.choice(FEATURES), br_ver=random.choice(BR_VERS[index]))
 
 
 def agent():
+
     return 'Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Gecko'
 
 
 def mobile_agent():
+
     return 'Mozilla/5.0 (Android 4.4; Mobile; rv:18.0) Gecko/18.0 Firefox/18.0'
 
 
-def agent_appender(agent=randomagent()):
-    return '|User-Agent=' + urllib.quote_plus(agent)
+def ios_agent():
+
+    return 'Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25'
+
+
+def spoofer(_agent=True, age_str=randomagent(), referer=False, ref_str=''):
+
+    if _agent and referer:
+        return '|User-Agent=' + quote_plus(age_str) + '&Referer=' + quote_plus(ref_str)
+    elif _agent:
+        return '|User-Agent=' + quote_plus(age_str)
+    elif referer:
+        return '|Referer=' + quote_plus(ref_str)
 
 
 def cfcookie(netloc, ua, timeout):
     try:
         headers = {'User-Agent': ua}
 
-        request = urllib2.Request(netloc, headers=headers)
+        req = urllib2.Request(netloc, headers=headers)
 
         try:
-            response = urllib2.urlopen(request, timeout=int(timeout))
+            urllib2.urlopen(req, timeout=int(timeout))
         except urllib2.HTTPError as response:
             result = response.read(5242880)
 
@@ -403,9 +583,9 @@ def cfcookie(netloc, ua, timeout):
 
             if len(line) > 0 and '=' in line:
 
-                sections=line.split('=')
+                sections = line.split('=')
                 line_val = parseJSString(sections[1])
-                decryptVal = int(eval(str(decryptVal)+sections[0][-1]+str(line_val)))
+                decryptVal = int(eval(str(decryptVal) + str(sections[0][-1]) + str(line_val)))
 
         answer = decryptVal + len(urlparse.urlparse(netloc).netloc)
 
@@ -413,31 +593,33 @@ def cfcookie(netloc, ua, timeout):
 
         if 'type="hidden" name="pass"' in result:
             passval = re.findall('name="pass" value="(.*?)"', result)[0]
-            query = '%s/cdn-cgi/l/chk_jschl?pass=%s&jschl_vc=%s&jschl_answer=%s' % (netloc, urllib.quote_plus(passval), jschl, answer)
+            query = '%s/cdn-cgi/l/chk_jschl?pass=%s&jschl_vc=%s&jschl_answer=%s' % (
+                netloc, quote_plus(passval), jschl, answer
+            )
             time.sleep(5)
 
         cookies = cookielib.LWPCookieJar()
         handlers = [urllib2.HTTPHandler(), urllib2.HTTPSHandler(), urllib2.HTTPCookieProcessor(cookies)]
         opener = urllib2.build_opener(*handlers)
-        opener = urllib2.install_opener(opener)
+        urllib2.install_opener(opener)
 
         try:
-            request = urllib2.Request(query, headers=headers)
-            response = urllib2.urlopen(request, timeout=int(timeout))
-        except:
+            req = urllib2.Request(query, headers=headers)
+            urllib2.urlopen(req, timeout=int(timeout))
+        except BaseException:
             pass
 
         cookie = '; '.join(['%s=%s' % (i.name, i.value) for i in cookies])
 
         return cookie
-    except:
+    except BaseException:
         pass
 
 
 def parseJSString(s):
     try:
-        offset=1 if s[0]=='+' else 0
-        val = int(eval(s.replace('!+[]','1').replace('!![]','1').replace('[]','0').replace('(','str(')[offset:]))
+        offset = 1 if s[0] == '+' else 0
+        val = int(eval(s.replace('!+[]', '1').replace('!![]', '1').replace('[]','0').replace('(', 'str(')[offset:]))
         return val
-    except:
+    except BaseException:
         pass

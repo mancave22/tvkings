@@ -23,19 +23,26 @@ import hashlib, json
 
 try:
     from sqlite3 import dbapi2 as database
-except:
+except ImportError:
+    # noinspection PyUnresolvedReferences
     from pysqlite2 import dbapi2 as database
 
-import control
+from . import control
 
 
 def add(url):
+
     try:
+
         data = json.loads(url)
 
         dbid = hashlib.md5()
-        for i in data['bookmark']: dbid.update(str(i))
-        for i in data['action']: dbid.update(str(i))
+
+        for i in data['bookmark']:
+            dbid.update(str(i))
+        for i in data['action']:
+            dbid.update(str(i))
+
         dbid = str(dbid.hexdigest())
 
         item = dict((k,v) for k, v in data.iteritems() if not k == 'bookmark')
@@ -48,17 +55,26 @@ def add(url):
         dbcur.execute("DELETE FROM bookmark WHERE dbid = '%s'" % dbid)
         dbcur.execute("INSERT INTO bookmark Values (?, ?)", (dbid, item))
         dbcon.commit()
-    except:
+
+    except BaseException:
+
         pass
 
 
 def delete(url):
+
     try:
+
         data = json.loads(url)
 
         dbid = hashlib.md5()
-        for i in data['delbookmark']: dbid.update(str(i))
-        for i in data['action']: dbid.update(str(i))
+
+        for i in data['delbookmark']:
+            dbid.update(str(i))
+
+        for i in data['action']:
+            dbid.update(str(i))
+
         dbid = str(dbid.hexdigest())
 
         control.makeFile(control.dataPath)
@@ -69,20 +85,27 @@ def delete(url):
         dbcon.commit()
 
         control.refresh()
-    except:
+
+    except BaseException:
+
         pass
 
 
 def get():
+
     try:
+
         control.makeFile(control.dataPath)
         dbcon = database.connect(control.bookmarksFile)
         dbcur = dbcon.cursor()
         dbcur.execute("SELECT * FROM bookmark")
         items = dbcur.fetchall()
         items = [eval(i[1].encode('utf-8')) for i in items]
+
         return items
-    except:
+
+    except BaseException:
+
         pass
 
 

@@ -20,11 +20,17 @@
 #     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 #     OTHER DEALINGS IN THE SOFTWARE.
 
+##### CAUTION #####
+# This module is for using on Python 2.6 only
+# It has NOT been adapted for Python 3
+
 from UserDict import DictMixin
+
 
 class OrderedDict(dict, DictMixin):
 
     def __init__(self, *args, **kwds):
+        super(OrderedDict, self).__init__(**kwds)
         if len(args) > 1:
             raise TypeError('expected at most 1 arguments, got %d' % len(args))
         try:
@@ -83,7 +89,7 @@ class OrderedDict(dict, DictMixin):
         inst_dict = vars(self).copy()
         self.__map, self.__end = tmp
         if inst_dict:
-            return (self.__class__, (items,), inst_dict)
+            return self.__class__, (items,), inst_dict
         return self.__class__, (items,)
 
     def keys(self):
