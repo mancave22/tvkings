@@ -120,7 +120,7 @@ and basketball events. NOT SUPPORTED BY ESPN OR DISNEY OR ANYONE ELSE
   </extension>
 </addon>
 
-<addon id="plugin.video.mancaveflix" name="Man Cave Flix" version="1.9" provider-name="Man Cave Entertainment">
+<addon id="plugin.video.mancaveflix" name="Man Cave Flix" version="2.0" provider-name="Man Cave Entertainment">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
         <import addon="script.module.universalscrapers" version="1.0.0" />
