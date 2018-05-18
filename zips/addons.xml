@@ -400,7 +400,7 @@ and basketball events. NOT SUPPORTED BY ESPN OR DISNEY OR ANYONE ELSE
     </extension>
 </addon>
 
-<addon id="repository.tvkings" name="TV Kings Repo" version="0.1.1" provider-name="TV Kings">
+<addon id="repository.tvkings" name="TV Kings Repo" version="0.1.2" provider-name="TV Kings">
 	<extension point="xbmc.addon.repository" name="TV Kings Repository">
 			<info compressed="false">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml</info>
 			<checksum>https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml.md5</checksum>
