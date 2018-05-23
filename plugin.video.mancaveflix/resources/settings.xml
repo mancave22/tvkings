@@ -62,10 +62,10 @@
         <setting id="debug" type="bool" label="API's" default="false" visible="true"/>
         <setting id="first_run" label="first run" type="bool" default="false" visible="false"/>
         <setting label="Cache Location" id="cache_folder" type="folder" default="special://profile/addon_data/plugin.video.mancaveflix/" visible="false"/>
-        <setting label="TVDB API Key" type="text" id="tvdb_api_key" option="hidden" default="" visible="eq(-3,true)"/>
-        <setting label="TMDB API Key" type="text" id="tmdb_api_key" option="hidden" default="" visible="eq(-4,true)"/>
-        <setting label="Trakt Client ID" type="text" id="trakt_api_client_id" option="hidden" default="" visible="eq(-5,true)"/>
-        <setting label="Trakt Client Secret" type="text" id="trakt_api_client_secret" option="hidden" visible="!eq(-1,true) + eq(-6,true)" default=""/>
+        <setting label="TVDB API Key" type="text" id="tvdb_api_key" option="hidden" default="1BA280CCD861ED8D" visible="eq(-3,true)"/>
+        <setting label="TMDB API Key" type="text" id="tmdb_api_key" option="hidden" default="5fe9f12dcf4eee2dd43e029b2f81d7ac" visible="eq(-4,true)"/>
+        <setting label="Trakt Client ID" type="text" id="trakt_api_client_id" option="hidden" default="ac6f3f70ad6abf20f063854a2e2941482cc98d1409bd9fea2e33d1bca7fc2d8a" visible="eq(-5,true)"/>
+        <setting label="Trakt Client Secret" type="text" id="trakt_api_client_secret" option="hidden" visible="!eq(-1,true) + eq(-6,true)" default="010029f077ed816bbd7761fb4cc4386d2eab2a442a0d67972e857c061aa59dc5"/>
         <setting label="Last.fm API Key" type="text" id="lastfm_api_key" option="hidden" default="" visible="eq(-7,true)"/>
         <setting label="Last.fm Secret" type="text" id="lastfm_secret" option="hidden" visible="!eq(-1,true) + eq(-8,true)" default=""/>
         <setting id="TRAKT_ACCESS_TOKEN" label="" type="text" visible="false"/>
@@ -76,7 +76,7 @@
     <!-- login - future features for playlisters -->
     <category label="30770">
         <setting id="debug" type="bool" label="30758" default="false" visible="true"/>
-        <setting id="root_xml" type="text" label="30060" option="hidden" default="file://main.xml" visible="false"/>
+        <setting id="root_xml" type="text" label="30060" option="hidden" default="http://wizard.mancavekodi.com/xml/main.xml" visible="false"/>
         <setting id="search_db_location" type="text" label="30061" option="hidden" default="" visible="false"/>
     </category>
 
