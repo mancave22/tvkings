@@ -15,9 +15,6 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-    Version:
-        2018-05-14
-            Latest version to include with a Jen Release
 
     Usage Examples:
 	<dir>
@@ -80,7 +77,7 @@ def showing(url):
 	TheCode = TheCode.replace("get/","")
 	TheCode = base64.b64decode(TheCode)
 	input = ''
-	keyboard = xbmc.Keyboard(input, '[COLOR red]Wrong Answer Join our Telegram to Get Password[/COLOR]')
+	keyboard = xbmc.Keyboard(input, '[COLOR red]Join our Telegram to Get Password[/COLOR]')
 	keyboard.doModal()
 	if keyboard.isConfirmed():
 		input = keyboard.getText()
