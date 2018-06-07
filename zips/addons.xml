@@ -172,6 +172,32 @@ and basketball events. NOT SUPPORTED BY ESPN OR DISNEY OR ANYONE ELSE
     </extension>
 </addon>
 
+<addon id="plugin.video.mcent" name="Man Cave Entertainment" version="1.0" provider-name="Man Cave & Man Cave Tech">
+    <requires>
+        <import addon="xbmc.python" version="2.19.0" />
+        <import addon="script.module.universalscrapers" version="1.0.0" />
+        <import addon="script.module.python.koding.aio" version="0.9.6.6" />
+        <import addon="script.module.beautifulsoup" version="3.2.1" />
+        <import addon="script.module.requests" version="2.9.1" />
+        <import addon="script.module.addon.common" version="2.0.0" />
+        <import addon="script.module.xmltodict" version="0.9.0" />
+        <!--<import addon="script.module.web-pdb" version="1.0"/>-->
+        <import addon="script.module.resolveurl" />
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="default.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.service" library="service.py" start="[login|startup]" />
+    <extension point="xbmc.addon.metadata">
+      <summary lang="en">All in One</summary>
+      <description lang="en">Man Cave Entertainment a all in one addon</description>
+      <disclaimer lang="en">The author of this addon do not host any of the content which is found and have no affiliation with any of the content providers. This addon simply searches websites for content. Use at your own risk!</disclaimer>
+      <platform>all</platform>
+        <website>mancavekodi.com</website>
+        <video_guide></video_guide>
+    </extension>
+</addon>
+
 <addon id="plugin.video.mcjamz" name="Man Cave Jamz" version="1.2" provider-name="Man Cave Entertainment">
     <requires>
         <import addon="xbmc.python" version="2.19.0" />
@@ -400,7 +426,7 @@ and basketball events. NOT SUPPORTED BY ESPN OR DISNEY OR ANYONE ELSE
     </extension>
 </addon>
 
-<addon id="repository.tvkings" name="TV Kings Repo" version="0.1.8" provider-name="TV Kings">
+<addon id="repository.tvkings" name="TV Kings Repo" version="0.1.9" provider-name="TV Kings">
 	<extension point="xbmc.addon.repository" name="TV Kings Repository">
 			<info compressed="false">https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml</info>
 			<checksum>https://raw.githubusercontent.com/mancave22/tvkings/master/zips/addons.xml.md5</checksum>
